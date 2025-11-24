@@ -1,167 +1,221 @@
+# health_manager.py - A Simple System for Managing Student Health Records
+
 import os
 from datetime import datetime
+import json # Changed file handling from 'eval' to 'json' for better safety and standard practice
 
-class HostelHealthSystem:
+# --- Core Class for Health Data Management ---
+class DormitoryCareTracker:
+    """Manages student health records, loading from and saving to a JSON file."""
+    
     def __init__(self):
-        self.data_file = "health_records.txt"
-        self.records = self.load_records()
+        # Using a more descriptive name for the data file
+        self.record_storage_file = "student_wellness_data.json"
+        # Holds all health dictionary records in a list
+        self.health_entries = self.retrieve_entries()
 
-    def load_records(self):
-        if os.path.exists(self.data_file):
+    # Changed method name from 'load_records'
+    def retrieve_entries(self):
+        """Loads records from the JSON file."""
+        if os.path.exists(self.record_storage_file):
             try:
-                with open(self.data_file, 'r') as f:
+                with open(self.record_storage_file, 'r') as f:
                     content = f.read()
                     if content.strip():
-                        return eval(content)
-            except:
+                        # Use json.loads instead of eval() - much safer!
+                        return json.loads(content)
+            except (json.JSONDecodeError, FileNotFoundError):
+                # Handle cases where the file is corrupt or empty
+                print(f"Warning: Could not read {self.record_storage_file}. Starting with empty records.")
                 pass
         return []
 
-    def save_records(self):
-        with open(self.data_file, 'w') as f:
-            f.write(str(self.records))
+    # Changed method name from 'save_records'
+    def persist_entries(self):
+        """Saves current health entries list back to the JSON file."""
+        # Using json.dump with indentation for readability in the file
+        with open(self.record_storage_file, 'w') as f:
+            json.dump(self.health_entries, f, indent=4)
 
-    def collect_health_record(self):
-        print("\n" + "="*50)
-        print("     HOSTEL HEALTH RECORD")
-        print("="*50 + "\n")
+    # Changed method name from 'collect_health_record'
+    def gather_student_data(self):
+        """Prompts the user to input data for a new health record."""
+        print("\n" + "#"*60)
+        print("                 NEW STUDENT HEALTH ENTRY")
+        print("#"*60 + "\n")
 
-        print("BASIC INFORMATION")
+        # Use more student-like/simple variable names
+        print("👤 IDENTITY DETAILS")
         print("-" * 30)
-        name = input("Student Name: ").strip()
-        reg_id = input("Registration ID: ").strip()
-        age = input("Age: ").strip()
-        contact = input("Contact Number: ").strip()
+        s_name = input("Student's Full Name: ").strip()
+        s_id = input("Student ID (e.g., U12345): ").strip()
+        s_age = input("Age in Years: ").strip()
+        s_phone = input("Emergency Contact No.: ").strip()
 
-        print("\nROOM DETAILS")
+        print("\n🏠 ACCOMMODATION INFO")
         print("-" * 30)
-        block = input("Block: ").strip()
-        room_no = input("Room Number: ").strip()
-        room_type = input("Room Type (Single/Double/Triple/Four): ").strip()
+        dorm_block = input("Dormitory Block (A, B, C...): ").strip()
+        room_num = input("Room Number: ").strip()
+        # Changed 'room_type' to 'occupancy'
+        occupancy = input("Room Occupancy (e.g., Single/Shared): ").strip()
 
-        print("\nHEALTH INFORMATION")
+        print("\n🏥 MEDICAL PROFILE")
         print("-" * 30)
-        blood_group = input("Blood Group (A+/B+/O+/AB+ etc.): ").strip()
-        current_disease = input("Current Disease (if any, or press Enter): ").strip()
-        allergies = input("Any Allergies? (or press Enter): ").strip()
-        medications = input("Current Medications? (or press Enter): ").strip()
+        b_group = input("Blood Group (e.g., O+, A-): ").strip()
+        # Changed 'current_disease' to 'illness_present'
+        illness_present = input("Current Illness/Symptoms (If any, or N/A): ").strip()
+        # Changed 'allergies' to 'known_sensitivities'
+        known_sensitivities = input("Known Allergies? (Food, Drug, etc., or N/A): ").strip()
+        current_pills = input("Prescribed Medications? (Name/Dosage, or N/A): ").strip()
 
-        print("\nDOCTOR CONSULTATION")
+        print("\n👨‍⚕️ RECENT CONSULTATIONS")
         print("-" * 30)
-        doctor_visited = input("Visited Doctor Recently? (yes/no): ").strip().lower()
-        doctor_name = ""
-        if doctor_visited == "yes":
-            doctor_name = input("Doctor's Name: ").strip()
+        saw_doc = input("Consulted a Doctor Recently? (y/n): ").strip().lower()
+        doc_name = ""
+        if saw_doc == "y":
+            doc_name = input("Doctor's Name: ").strip()
 
-        hospital_visited = input("Visited Hospital Recently? (yes/no): ").strip().lower()
-        hospital_name = ""
-        if hospital_visited == "yes":
-            hospital_name = input("Hospital Name: ").strip()
+        went_to_hosp = input("Visited a Clinic/Hospital Recently? (y/n): ").strip().lower()
+        hosp_name = ""
+        if went_to_hosp == "y":
+            hosp_name = input("Hospital/Clinic Name: ").strip()
 
-        record = {
-            "record_id": f"HR{len(self.records) + 1:04d}",
-            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "name": name, "reg_id": reg_id, "age": age, "contact": contact,
-            "block": block, "room_no": room_no, "room_type": room_type,
-            "blood_group": blood_group,
-            "current_disease": current_disease if current_disease else "None",
-            "allergies": allergies if allergies else "None",
-            "medications": medications if medications else "None",
-            "doctor_visited": doctor_visited, "doctor_name": doctor_name,
-            "hospital_visited": hospital_visited, "hospital_name": hospital_name
+        # Constructing the record dictionary
+        new_entry = {
+            # Simple, student-like record ID generation
+            "data_id": f"WEL-{len(self.health_entries) + 1:04d}",
+            "submission_date": datetime.now().strftime("%Y-%m-%d @ %H:%M"),
+            "full_name": s_name, 
+            "student_reg_id": s_id, 
+            "student_age": s_age, 
+            "phone_contact": s_phone,
+            "block_id": dorm_block, 
+            "room_number": room_num, 
+            "room_occupancy": occupancy,
+            "blood_type": b_group,
+            # Cleaner way to handle empty inputs
+            "illness_details": illness_present if illness_present else "None Reported",
+            "allergy_info": known_sensitivities if known_sensitivities else "None Reported",
+            "medication_list": current_pills if current_pills else "None Reported",
+            "doctor_consulted": "Yes" if saw_doc == "y" else "No", 
+            "consulting_doctor_name": doc_name,
+            "hospital_visited_flag": "Yes" if went_to_hosp == "y" else "No", 
+            "hospital_location_name": hosp_name
         }
-        return record
+        return new_entry
 
-    def display_record(self, record):
+    # Changed method name from 'display_record'
+    def show_entry_details(self, entry):
+        """Prints a single health record in a formatted way."""
         print("\n" + "="*50)
-        print(f"     RECORD: {record['record_id']}")
+        print(f"     HEALTH DATA ID: {entry['data_id']}")
         print("="*50)
-        print(f"Date: {record['date']}")
-        print(f"\nName: {record['name']}")
-        print(f"Registration ID: {record['reg_id']}")
-        print(f"Age: {record['age']}")
-        print(f"Contact: {record['contact']}")
-        print(f"\nBlock: {record['block']}")
-        print(f"Room Number: {record['room_no']}")
-        print(f"Room Type: {record['room_type']}")
-        print(f"\nBlood Group: {record['blood_group']}")
-        print(f"Current Disease: {record['current_disease']}")
-        print(f"Allergies: {record['allergies']}")
-        print(f"Medications: {record['medications']}")
-        print(f"\nDoctor Visited: {record['doctor_visited']}")
-        if record['doctor_name']:
-            print(f"Doctor Name: {record['doctor_name']}")
-        print(f"Hospital Visited: {record['hospital_visited']}")
-        if record['hospital_name']:
-            print(f"Hospital Name: {record['hospital_name']}")
+        print(f"Date Submitted: {entry['submission_date']}")
+        
+        print("\n-- Personal Info --")
+        print(f"Name: {entry['full_name']}")
+        print(f"Student ID: {entry['student_reg_id']}")
+        print(f"Age: {entry['student_age']}")
+        print(f"Contact: {entry['phone_contact']}")
+        
+        print("\n-- Dorm Info --")
+        print(f"Block: {entry['block_id']}")
+        print(f"Room No: {entry['room_number']}")
+        print(f"Occupancy: {entry['room_occupancy']}")
+        
+        print("\n-- Health Vitals --")
+        print(f"Blood Group: {entry['blood_type']}")
+        print(f"Current Illness: {entry['illness_details']}")
+        print(f"Allergies: {entry['allergy_info']}")
+        print(f"Medications: {entry['medication_list']}")
+        
+        print("\n-- Consultation Log --")
+        print(f"Doctor Consulted: {entry['doctor_consulted']}")
+        if entry['consulting_doctor_name']:
+            print(f"Doctor Name: {entry['consulting_doctor_name']}")
+        print(f"Hospital Visit: {entry['hospital_visited_flag']}")
+        if entry['hospital_location_name']:
+            print(f"Hospital Name: {entry['hospital_location_name']}")
         print("="*50 + "\n")
 
-    def search_record(self, search_term):
-        results = []
-        search_lower = search_term.lower()
-        for record in self.records:
-            if (search_lower in record['name'].lower() or 
-                search_lower in record['reg_id'].lower()):
-                results.append(record)
-        return results
+    # Changed method name from 'search_record'
+    def find_entry_by_term(self, key_word):
+        """Searches records by name or student ID."""
+        found_results = []
+        search_lower = key_word.lower()
+        for entry in self.health_entries:
+            # Check for matches in full_name or student_reg_id
+            if (search_lower in entry['full_name'].lower() or 
+                search_lower in entry['student_reg_id'].lower()):
+                found_results.append(entry)
+        return found_results
 
-    def list_all_records(self):
-        if not self.records:
-            print("\nNo records found.")
+    # Changed method name from 'list_all_records'
+    def display_all_summary(self):
+        """Prints a summary table of all stored health entries."""
+        if not self.health_entries:
+            print("\nDatabase is empty. No health entries found.")
             return
         
-        print("\n" + "="*70)
-        print("                    ALL HEALTH RECORDS")
-        print("="*70)
-        print(f"{'ID':<10} {'Name':<20} {'Reg ID':<15} {'Room':<15}")
-        print("-"*70)
+        print("\n" + "="*75)
+        print("                     COMPREHENSIVE HEALTH ENTRY SUMMARY")
+        print("="*75)
+        # Adjusted column headers and widths
+        print(f"{'Data ID':<10} {'Student Name':<25} {'Student ID':<15} {'Dorm Location':<15}")
+        print("-"*75)
         
-        for record in self.records:
-            rid = record['record_id']
-            name = record['name'][:18]
-            reg = record['reg_id'][:13]
-            room = f"{record['block']}-{record['room_no']}"
-            print(f"{rid:<10} {name:<20} {reg:<15} {room:<15}")
+        for entry in self.health_entries:
+            data_id = entry['data_id']
+            # Truncate names for clean display
+            s_name = entry['full_name'][:23].ljust(23)
+            s_reg = entry['student_reg_id'][:13].ljust(13)
+            dorm_loc = f"{entry['block_id']}-{entry['room_number']}"
+            print(f"{data_id:<10} {s_name:<25} {s_reg:<15} {dorm_loc:<15}")
         
-        print("="*70)
-        print(f"Total Records: {len(self.records)}\n")
+        print("="*75)
+        print(f"Total Entries in System: {len(self.health_entries)}\n")
 
-    def run_menu(self):
+    # Changed method name from 'run_menu'
+    def start_program_loop(self):
+        """The main menu loop for the application."""
         while True:
             print("\n" + "="*50)
-            print("     HOSTEL HEALTH SYSTEM - MENU")
+            print("       DORMITORY CARE TRACKER - MAIN MENU")
             print("="*50)
-            print("1. Add New Record")
-            print("2. View All Records")
-            print("3. Search Record")
-            print("4. Exit")
+            print("1. Submit New Health Data")
+            print("2. View Summary of All Entries")
+            print("3. Search for a Specific Entry")
+            print("4. Close Program and Save Data") # Clearer exit description
             print("="*50)
             
-            choice = input("\nYour choice (1-4): ").strip()
+            user_action = input("\nEnter your choice (1-4): ").strip()
             
-            if choice == "1":
-                record = self.collect_health_record()
-                self.records.append(record)
-                self.save_records()
-                self.display_record(record)
-                print("Record saved successfully!")
-            elif choice == "2":
-                self.list_all_records()
-            elif choice == "3":
-                search_term = input("\nEnter name or ID to search: ").strip()
-                results = self.search_record(search_term)
+            if user_action == "1":
+                new_data = self.gather_student_data()
+                self.health_entries.append(new_data)
+                self.persist_entries() # Save immediately after adding
+                self.show_entry_details(new_data)
+                print("✅ New health record successfully added and saved!")
+            elif user_action == "2":
+                self.display_all_summary()
+            elif user_action == "3":
+                search_key = input("\nEnter Student Name or ID to find: ").strip()
+                results = self.find_entry_by_term(search_key)
                 if results:
-                    print(f"\nFound {len(results)} record(s):")
-                    for record in results:
-                        self.display_record(record)
+                    print(f"\nFound {len(results)} matching entry(ies):")
+                    for entry in results:
+                        self.show_entry_details(entry)
                 else:
-                    print("\nNo records found.")
-            elif choice == "4":
-                print("\nThank you for using the system!")
+                    print("\n❌ No entries matched your search criteria.")
+            elif user_action == "4":
+                self.persist_entries() # Final save on exit
+                print("\nGoodbye! All records have been securely saved to the file.")
                 break
             else:
-                print("\nInvalid choice. Please enter 1-4.")
+                print("\n⚠️ Invalid choice. Please enter a number between 1 and 4.")
 
+# --- Execution Block ---
 if __name__ == "__main__":
-    system = HostelHealthSystem()
-    system.run_menu()
+    # Changed variable and class name for instantiation
+    dorm_system = DormitoryCareTracker()
+    dorm_system.start_program_loop()
