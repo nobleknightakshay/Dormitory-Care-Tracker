@@ -3,7 +3,6 @@ Reg. ID = 25BAI11326
 
   
 **Dormitory Care Tracker – A Simple Student Health Record Management System**  
-(Word count: 698)
 
 1. Introduction  
 The Dormitory Care Tracker is a lightweight, standalone Python console application developed to assist hostel wardens, resident assistants, and campus medical staff in maintaining up-to-date health records of students living in dormitories. In many educational institutions, especially in developing regions, there is often no dedicated digital system for tracking basic yet critical health information of hostel residents. This project fills that gap with a zero-dependency, easy-to-deploy solution.
@@ -72,6 +71,7 @@ Current version supports only creation and read operations. Future enhancements 
 
 9. Conclusion  
 Dormitory Care Tracker successfully demonstrates that a secure, functional, and aesthetically pleasant health record system can be built with fewer than 300 lines of standard Python code. It proves especially valuable for small colleges, hostels, and residential schools where heavyweight electronic health record (EHR) systems are impractical. The project prioritizes simplicity, safety, and real-world usability while remaining fully extensible for future needs.
+
 
 
 
