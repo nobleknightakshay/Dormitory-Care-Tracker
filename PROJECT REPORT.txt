@@ -1,0 +1,77 @@
+Name = AKSHAY PRATAP SINGH 
+Reg. ID = 25BAI11326 
+
+  
+**Dormitory Care Tracker – A Simple Student Health Record Management System**  
+(Word count: 698)
+
+1. Introduction  
+The Dormitory Care Tracker is a lightweight, standalone Python console application developed to assist hostel wardens, resident assistants, and campus medical staff in maintaining up-to-date health records of students living in dormitories. In many educational institutions, especially in developing regions, there is often no dedicated digital system for tracking basic yet critical health information of hostel residents. This project fills that gap with a zero-dependency, easy-to-deploy solution.
+
+2. Objectives  
+- To provide a simple, offline tool for recording and retrieving student health data.  
+- To ensure data persistence using a secure and human-readable JSON file.  
+- To eliminate unsafe practices (previously used eval()) and follow Python best practices.  
+- To deliver a user-friendly interface with clear prompts and formatted output.  
+- To enable quick search and summary viewing without requiring database software.
+
+3. Features Implemented  
+- Persistent storage in student_wellness_data.json with proper indentation and error handling.  
+- Automatic generation of unique record IDs (WEL-0001, WEL-0002, …) and timestamping using datetime.  
+- Comprehensive data collection covering:  
+  → Personal details (name, student ID, age, emergency contact)  
+  → Accommodation info (block, room number, occupancy type)  
+  → Medical profile (blood group, current illness, allergies, ongoing medication)  
+  → Recent consultations (doctor name, hospital/clinic visits)  
+- Clean, sectioned input prompts with visual separators and emojis for better usability.  
+- Three retrieval modes:  
+  1. Summary table of all records  
+  2. Detailed formatted view of individual entries  
+  3. Case-insensitive search by name or student ID (partial matches supported)  
+- Immediate saving after every new entry and final save on exit to prevent data loss.  
+- Graceful handling of empty files, corrupted JSON errors, and missing optional fields (“None Reported”).
+
+4. Technical Highlights & Improvements  
+- Replaced dangerous eval()-based loading with json.loads() and json.dump() for security and reliability.  
+- Renamed classes, methods, and variables to be more descriptive (e.g., DormitoryCareTracker, gather_student_data, persist_entries).  
+- Added comprehensive try-except blocks for file operations.  
+- Used f-strings, type hints (implicit), and consistent code style following PEP 8.  
+- Designed with future extensibility in mind (easy to add CSV export, edit/delete functions, or GUI later).
+
+5. System Requirements  
+- Python 3.6 or higher  
+- No external libraries or internet connection required  
+- Works on Windows, macOS, and Linux
+
+6. How to Use  
+1. Place health_manager.py in any folder.  
+2. Run python health_manager.py  
+3. Choose options from the menu:  
+   1 → Add new health record  
+   2 → View summary of all students  
+   3 → Search student by name or ID  
+   4 → Exit (auto-saves everything)
+
+All records are automatically saved in the same directory as student_wellness_data.json, which can be opened with any text editor or imported into Excel/Google Sheets.
+
+7. Advantages  
+- Completely free and open-source  
+- No installation or database setup needed  
+- Data remains private and local (ideal for institutions with limited infrastructure)  
+- Easy to backup – just copy the JSON file  
+- Minimal resource usage; runs even on low-end computers
+
+8. Limitations & Future Scope  
+Current version supports only creation and read operations. Future enhancements can include:  
+- Edit and delete records  
+- Data validation (age as integer, valid phone format)  
+- Export to PDF/CSV  
+- Password protection or user roles  
+- Simple Tkinter or web-based GUI  
+- Integration with campus LDAP or student database
+
+9. Conclusion  
+Dormitory Care Tracker successfully demonstrates that a secure, functional, and aesthetically pleasant health record system can be built with fewer than 300 lines of standard Python code. It proves especially valuable for small colleges, hostels, and residential schools where heavyweight electronic health record (EHR) systems are impractical. The project prioritizes simplicity, safety, and real-world usability while remaining fully extensible for future needs.
+
+
+
